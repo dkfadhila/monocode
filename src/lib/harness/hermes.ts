@@ -6,6 +6,10 @@
  * any LLM via its own config (~/.hermes/config.yaml) and credential
  * pools (~/.hermes/auth.json).
  *
+ * Install:  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+ * Setup:    hermes setup
+ * Docs:     https://hermes-agent.nousresearch.com/docs
+ *
  * Key differences from Cursor:
  *   - No proprietary login flow; Hermes uses its own credential system.
  *   - Model selection is config-driven, not catalog-driven.

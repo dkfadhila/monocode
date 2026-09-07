@@ -6,6 +6,13 @@
 // ~/.hermes/config.yaml.
 //
 // Native model id format: "provider/model-name" (e.g. "anthropic/claude-sonnet-4")
+//
+// NOTE: If a user's Hermes config doesn't match any catalog entry, the UI
+// may show an empty model list. This is by design — Hermes is provider-
+// agnostic and users configure models via `hermes setup` or directly in
+// ~/.hermes/config.yaml. The catalog below is a convenience defaults set;
+// see https://hermes-agent.nousresearch.com/docs/user-guide/configuration
+// for full model configuration documentation.
 
 import type { AgentModel } from "../models";
 

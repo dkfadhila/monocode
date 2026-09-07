@@ -1452,9 +1452,21 @@ fn hermes_help_mentions_acp(path: &Path) -> bool {
         .stderr(Stdio::piped());
     apply_gui_env(&mut cmd);
     isolate_child(&mut cmd);
-    let Ok(child) = spawn_managed(&mut cmd) else {
+    let Ok(mut child) = spawn_managed(&mut cmd) else {
         return false;
     };
+    // Timeout after 5 seconds to avoid blocking the probe if hermes hangs.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    loop {
+        if let Ok(Some(_status)) = child.try_wait() {
+            break;
+        }
+        if std::time::Instant::now() > deadline {
+            let _ = child.kill();
+            return false;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
     let Ok(output) = child.wait_with_output() else {
         return false;
     };
