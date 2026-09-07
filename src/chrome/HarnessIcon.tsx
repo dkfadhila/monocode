@@ -4,6 +4,7 @@ import codex from "../assets/providers/codex.svg";
 import cursor from "../assets/providers/cursor.svg";
 import fx from "../assets/providers/fx.svg";
 import grok from "../assets/providers/grok.svg";
+import hermes from "../assets/providers/hermes.svg";
 import omp from "../assets/providers/omp.svg";
 import opencode from "../assets/providers/opencode.svg";
 import pi from "../assets/providers/pi.svg";
@@ -14,6 +15,7 @@ export const HARNESS_ICONS: Record<HarnessId, string> = {
   codex,
   cursor,
   grok,
+  hermes,
   opencode,
   pi,
   omp,

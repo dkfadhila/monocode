@@ -313,6 +313,10 @@ export function resolveGrokBinary(): Promise<{ path: string }> {
   return invoke("harness_resolve_grok");
 }
 
+export function resolveHermesBinary(): Promise<{ path: string }> {
+  return invoke("harness_resolve_hermes");
+}
+
 export function freeHarnessPort(): Promise<number> {
   return invoke("harness_free_port");
 }

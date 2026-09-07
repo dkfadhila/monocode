@@ -6,6 +6,7 @@ import {
   resolveCursorBinary,
   resolveFxBinary,
   resolveGrokBinary,
+  resolveHermesBinary,
   resolveOmpBinary,
   resolveOpenCodeBinary,
   resolvePiBinary,
@@ -26,6 +27,10 @@ const CLI: Record<HarnessId, { name: string; install?: string }> = {
     name: "Grok Build CLI",
     install: "curl -fsSL https://x.ai/cli/install.sh | bash",
   },
+  hermes: {
+    name: "Hermes Agent CLI",
+    install: "curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash",
+  },
   opencode: { name: "OpenCode CLI" },
   pi: { name: "Pi CLI", install: "npm i -g @earendil-works/pi-coding-agent" },
   omp: { name: "omp CLI", install: "curl -fsSL https://omp.sh/install | sh" },
@@ -37,6 +42,7 @@ let availability: HarnessAvailability = {
   codex: false,
   cursor: false,
   grok: false,
+  hermes: false,
   opencode: false,
   pi: false,
   omp: false,
@@ -154,6 +160,14 @@ export function probeHarnessAvailability(
       if (id === "grok") {
         try {
           await resolveGrokBinary();
+          return [id, true] as const;
+        } catch {
+          return [id, false] as const;
+        }
+      }
+      if (id === "hermes") {
+        try {
+          await resolveHermesBinary();
           return [id, true] as const;
         } catch {
           return [id, false] as const;

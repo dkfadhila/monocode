@@ -1412,6 +1412,58 @@ fn resolve_grok() -> Option<PathBuf> {
     first_binary_matching(candidates, is_grok_agent)
 }
 
+fn resolve_hermes() -> Option<PathBuf> {
+    let home = dirs_home().map(PathBuf::from);
+    let mut candidates: Vec<PathBuf> = Vec::new();
+
+    if let Some(home) = &home {
+        candidates.push(home.join(".local/bin/hermes"));
+        candidates.push(home.join(".hermes/bin/hermes"));
+        candidates.push(home.join(".npm-global/bin/hermes"));
+        candidates.push(home.join(".cargo/bin/hermes"));
+    }
+    #[cfg(target_os = "macos")]
+    candidates.push(PathBuf::from("/opt/homebrew/bin/hermes"));
+    candidates.push(PathBuf::from("/usr/local/bin/hermes"));
+    candidates.push(PathBuf::from("/usr/bin/hermes"));
+    candidates.push(PathBuf::from("/snap/bin/hermes"));
+    if let Some(from_shell) = which_via_login_shell("hermes") {
+        candidates.push(from_shell);
+    }
+
+    first_binary_matching(candidates, is_hermes_agent)
+}
+
+fn is_hermes_agent(path: &Path) -> bool {
+    if !path.is_file() {
+        return false;
+    }
+    if !binary_name_eq(path, "hermes") {
+        return false;
+    }
+    hermes_help_mentions_acp(path)
+}
+
+fn hermes_help_mentions_acp(path: &Path) -> bool {
+    let mut cmd = Command::new(path);
+    cmd.arg("--help")
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    apply_gui_env(&mut cmd);
+    isolate_child(&mut cmd);
+    let Ok(child) = spawn_managed(&mut cmd) else {
+        return false;
+    };
+    let Ok(output) = child.wait_with_output() else {
+        return false;
+    };
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let combined = format!("{stdout}{stderr}");
+    combined.contains("acp") || combined.contains("Hermes Agent")
+}
+
 fn is_pi_coding_agent(path: &Path) -> bool {
     if !path.is_file() {
         return false;
